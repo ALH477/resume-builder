@@ -1,5 +1,5 @@
 {
-  description = "GTK Resume Builder - A professional HTML resume generator";
+  description = "GTK Resume Builder - A professional HTML resume generator with web interface";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -11,9 +11,11 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         
+        pythonEnv = pkgs.python3;
+        
         resume-builder = pkgs.python3Packages.buildPythonApplication {
           pname = "resume-builder";
-          version = "1.0.0";
+          version = "1.1.0";
           
           src = ./.;
           
@@ -39,11 +41,13 @@
             mkdir -p $out/share/doc/resume-builder
             
             cp resume_builder.py $out/share/resume-builder/
+            if [ -f web_app.py ]; then cp web_app.py $out/share/resume-builder/; fi
             chmod +x $out/share/resume-builder/resume_builder.py
+            if [ -f $out/share/resume-builder/web_app.py ]; then chmod +x $out/share/resume-builder/web_app.py; fi
             
             cat > $out/bin/resume-builder <<EOF
             #!${pkgs.bash}/bin/bash
-            exec ${pkgs.python3}/bin/python3 $out/share/resume-builder/resume_builder.py "\$@"
+            exec ${pythonEnv}/bin/python3 $out/share/resume-builder/resume_builder.py "\$@"
             EOF
             chmod +x $out/bin/resume-builder
             
@@ -52,7 +56,7 @@
           '';
           
           meta = with pkgs.lib; {
-            description = "A GTK3-based resume builder that generates professional HTML resumes";
+            description = "A GTK3 and web-based resume builder that generates professional HTML resumes";
             homepage = "https://github.com/ALH477/resume-builder";
             license = licenses.asl20;
             maintainers = [ "ALH477@users.noreply.github.com" ];
@@ -68,7 +72,7 @@
             name = "image-root";
             paths = [
               pkgs.bash
-              pkgs.python3
+              pythonEnv
               pkgs.python3Packages.pygobject3
               pkgs.gtk3
               pkgs.gobject-introspection
@@ -101,8 +105,37 @@
             ];
             Labels = {
               "org.opencontainers.image.source" = "https://github.com/ALH477/resume-builder";
-              "org.opencontainers.image.description" = "A GTK3-based desktop application for building professional HTML resumes";
-              "org.opencontainers.image.version" = "1.0.0";
+              "org.opencontainers.image.description" = "GTK3 and web-based resume builder - use --web for Docker";
+              "org.opencontainers.image.version" = "1.1.0";
+              "maintainer" = "ALH477";
+            };
+          };
+        };
+        
+        webDockerImage = pkgs.dockerTools.buildImage {
+          name = "resume-builder-web";
+          tag = "latest";
+          
+          copyToRoot = pkgs.buildEnv {
+            name = "web-image-root";
+            paths = [
+              pkgs.bash
+              pythonEnv
+              pkgs.python3Packages.flask
+              resume-builder
+            ];
+            pathsToLink = [ "/bin" "/lib" "/share" ];
+          };
+          
+          config = {
+            Cmd = [ "/bin/resume-builder" "--web" "--host" "0.0.0.0" "--port" "5000" ];
+            ExposedPorts = {
+              "5000/tcp" = {};
+            };
+            Labels = {
+              "org.opencontainers.image.source" = "https://github.com/ALH477/resume-builder";
+              "org.opencontainers.image.description" = "Web-based resume builder - Flask interface for Docker";
+              "org.opencontainers.image.version" = "1.1.0";
               "maintainer" = "ALH477";
             };
           };
@@ -114,6 +147,7 @@
           default = resume-builder;
           resume-builder = resume-builder;
           docker = dockerImage;
+          docker-web = webDockerImage;
         };
         
         apps = {
@@ -129,15 +163,17 @@
         
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            python3
+            pythonEnv
             python3Packages.pygobject3
+            python3Packages.flask
             gtk3
             gobject-introspection
           ];
           
           shellHook = ''
             echo "Resume Builder development environment"
-            echo "Run: python3 resume_builder.py"
+            echo "Desktop mode: python3 resume_builder.py"
+            echo "Web mode: python3 web_app.py"
           '';
         };
       }

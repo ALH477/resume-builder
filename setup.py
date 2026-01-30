@@ -20,13 +20,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="resume-builder-gtk",
-    version="1.0.0",
-    author="Resume Builder Contributors",
-    description="A GTK3-based resume builder that generates professional HTML resumes",
+    version="1.1.0",
+    author="ALH477",
+    description="A GTK3 and web-based resume builder that generates professional HTML resumes",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/resume-builder",
-    py_modules=["resume_builder"],
+    url="https://github.com/ALH477/resume-builder",
+    py_modules=["resume_builder", "web_app"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: End Users/Desktop",
@@ -38,13 +38,19 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Office/Business",
         "Topic :: Text Processing :: Markup :: HTML",
+        "Topic :: Internet :: WWW/HTTP :: WSGI",
     ],
     python_requires=">=3.8",
     install_requires=[
-        "PyGObject>=3.36.0",
+        "PyGObject>=3.36.0; platform_system!='Windows'",
     ],
+    extras_require={
+        "web": ["flask>=2.0.0"],
+        "docker": ["flask>=2.0.0"],
+    },
     entry_points={
         "console_scripts": [
             "resume-builder=resume_builder:main",

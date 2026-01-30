@@ -1132,11 +1132,48 @@ class SkillDialog(Gtk.Dialog):
 
 def main():
     """Main entry point for the application."""
-    logger.info("Starting Resume Builder")
-    win = ResumeBuilder()
-    win.connect("destroy", Gtk.main_quit)
-    win.show_all()
-    Gtk.main()
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description="Resume Builder - Create professional HTML resumes",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  resume_builder.py                  # Launch GTK desktop interface
+  resume_builder.py --web            # Launch web interface
+  resume_builder.py --web --port 8080  # Web interface on port 8080
+  resume_builder.py --help           # Show this help message
+        """
+    )
+    parser.add_argument("--web", action="store_true", help="Run web interface instead of GTK")
+    parser.add_argument("--host", default="0.0.0.0", help="Host for web server (default: 0.0.0.0)")
+    parser.add_argument("--port", type=int, default=5000, help="Port for web server (default: 5000)")
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode for web server")
+    
+    args = parser.parse_args()
+    
+    if args.web:
+        logger.info(f"Starting Resume Builder web interface on {args.host}:{args.port}")
+        try:
+            from web_app import app
+            app.run(host=args.host, port=args.port, debug=args.debug)
+        except ImportError as e:
+            logger.error(f"Flask not installed. Install with: pip install flask")
+            print(f"Error: Flask is required for web mode. Install with: pip install flask")
+            sys.exit(1)
+    else:
+        logger.info("Starting Resume Builder GTK interface")
+        try:
+            win = ResumeBuilder()
+            win.connect("destroy", Gtk.main_quit)
+            win.show_all()
+            Gtk.main()
+        except NameError:
+            print("Error: GTK3 is not available. Use --web for web interface or install GTK3.")
+            print("On Ubuntu/Debian: sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0")
+            print("On Fedora: sudo dnf install python3-gobject gtk3")
+            print("On Arch: sudo pacman -S python-gobject gtk3")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
