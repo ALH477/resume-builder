@@ -1,0 +1,2 @@
+# Requirements for web interface only (no GTK)
+Flask>=2.0.0

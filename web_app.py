@@ -17,6 +17,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, request, render_template_string, jsonify, send_file, Response
+from html_generator import generate_html as generate_resume_html
 
 logging.basicConfig(
     level=logging.INFO,
@@ -397,135 +398,7 @@ HTML_TEMPLATE = '''
 '''
 
 def generate_html(data):
-    def esc(text):
-        return html.escape(str(text)) if text else ''
-    
-    exp_html = ""
-    for exp in data.get('experience', []):
-        bullets = "".join([f"<li>{esc(item)}</li>" for item in exp.get('bullets', [])])
-        exp_html += f'''
-        <section class="blocks">
-            <div class="date"><span>{esc(exp['end_date'])}</span><span>{esc(exp['start_date'])}</span></div>
-            <div class="decorator"></div>
-            <div class="details">
-                <header><h3>{esc(exp['title'])}</h3><span class="place">{esc(exp['company'])}</span><span class="location">{esc(exp.get('location', ''))}</span></header>
-                <div><ul>{bullets}</ul></div>
-            </div>
-        </section>'''
-    
-    proj_html = ""
-    for proj in data.get('projects', []):
-        bullets = "".join([f"<li>{esc(item)}</li>" for item in proj.get('bullets', [])])
-        proj_html += f'''
-        <section class="blocks">
-            <div class="date"><span>{esc(proj['end_date'])}</span><span>{esc(proj['start_date'])}</span></div>
-            <div class="decorator"></div>
-            <div class="details">
-                <header><h3>{esc(proj['title'])}</h3><span class="place">{esc(proj.get('subtitle', ''))}</span></header>
-                <div><ul>{bullets}</ul></div>
-            </div>
-        </section>'''
-    
-    edu_html = ""
-    for edu in data.get('education', []):
-        edu_html += f'''
-        <section class="blocks">
-            <div class="date"><span>{esc(edu['end_date'])}</span><span>{esc(edu['start_date'])}</span></div>
-            <div class="decorator"></div>
-            <div class="details">
-                <header><h3>{esc(edu['degree'])}</h3><span class="place">{esc(edu['school'])}</span><span class="location">{esc(edu.get('location', ''))}</span></header>
-                <div>{esc(edu.get('notes', ''))}</div>
-            </div>
-        </section>'''
-    
-    skills_html = ""
-    for skill in data.get('skills', []):
-        skills_html += f'<ul><li><strong>{esc(skill["category"])}:</strong></li><li>{esc(skill["skills"])}</li></ul>'
-    
-    website = data['contact'].get('website', '')
-    website_display = website.replace('https://', '').replace('http://', '')
-    
-    html_template = '''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>{name} Resume</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Source+Code+Pro:400" rel="stylesheet">
-    <style>
-        html {{ line-height: 1.15; -webkit-text-size-adjust: 100%; }}
-        body {{ margin: 0; font-family: "Open Sans", sans-serif; font-weight: 300; line-height: 1.3; color: #444; hyphens: auto; }}
-        h1, h2, h3 {{ margin: 0; color: #000; }}
-        li {{ list-style-type: none; }}
-        @page {{ size: letter portrait; margin: 0; }}
-        * {{ box-sizing: border-box; }}
-        :root {{ --page-width: 8.5in; --page-height: 11in; --main-width: 6.4in; --sidebar-width: calc(var(--page-width) - var(--main-width)); --decorator-horizontal-margin: 0.2in; --sidebar-horizontal-padding: 0.2in; --decorator-outer-offset-top: 10px; --decorator-outer-offset-left: -5.5px; --decorator-border-width: 1px; --decorator-outer-dim: 9px; --decorator-border: 1px solid #ccc; --row-blocks-padding-top: 5pt; --date-block-width: 0.6in; }}
-        body {{ width: var(--page-width); height: var(--page-height); margin: 0; }}
-        #main {{ float: left; width: var(--main-width); padding: 0.25in 0.25in 0 0.25in; font-size: 7pt; }}
-        #sidebar {{ float: right; position: relative; width: var(--sidebar-width); height: 100%; padding: 0.6in var(--sidebar-horizontal-padding); background-color: #f2f2f2; font-size: 8.5pt; }}
-        #title, h1, h2 {{ text-transform: uppercase; }}
-        #title {{ position: relative; left: 0.55in; margin-bottom: 0.3in; line-height: 1.2; }}
-        #title h1 {{ font-weight: 300; font-size: 18pt; line-height: 1.5; }}
-        .subtitle {{ font-size: 8pt; }}
-        .main-block {{ margin-top: 0.1in; }}
-        #main h2 {{ position: relative; top: var(--row-blocks-padding-top); left: calc((var(--date-block-width) + var(--decorator-horizontal-margin))); font-weight: 400; font-size: 11pt; color: #555; }}
-        .blocks {{ display: flex; flex-flow: row nowrap; }}
-        .blocks > div {{ padding-top: var(--row-blocks-padding-top); }}
-        .date {{ flex: 0 0 var(--date-block-width); padding-top: calc(var(--row-blocks-padding-top) + 2.5pt); padding-right: var(--decorator-horizontal-margin); font-size: 7pt; text-align: right; line-height: 1; }}
-        .date span {{ display: block; }}
-        .decorator {{ flex: 0 0 0; position: relative; width: 2pt; min-height: 100%; border-left: var(--decorator-border); }}
-        .decorator::before {{ position: absolute; top: var(--decorator-outer-offset-top); left: var(--decorator-outer-offset-left); content: ''; display: block; width: var(--decorator-outer-dim); height: var(--decorator-outer-dim); border-radius: calc(var(--decorator-outer-dim) / 2); background-color: #fff; }}
-        .decorator::after {{ position: absolute; top: calc(var(--decorator-outer-offset-top) + var(--decorator-border-width)); left: calc(var(--decorator-outer-offset-left) + var(--decorator-border-width)); content: ''; display: block; width: calc(var(--decorator-outer-dim) - (var(--decorator-border-width) * 2)); height: calc(var(--decorator-outer-dim) - (var(--decorator-border-width) * 2)); border-radius: calc((var(--decorator-outer-dim) - (var(--decorator-border-width) * 2)) / 2); background-color: #555; }}
-        .details {{ flex: 1 0 0; padding-left: var(--decorator-horizontal-margin); padding-top: calc(var(--row-blocks-padding-top) - 0.5pt); }}
-        .details header {{ color: #000; }}
-        .details h3 {{ font-size: 9pt; }}
-        .details .place {{ float: left; font-size: 7.5pt; }}
-        .details .location {{ float: right; }}
-        .details div {{ clear: both; }}
-        #main ul {{ padding-left: 0.07in; margin: 0.08in 0; }}
-        #main li {{ margin: 0 0 0.025in 0; }}
-        #main li::before {{ position: relative; margin-left: -4.25pt; content: '• '; }}
-        #sidebar h1 {{ font-weight: 400; font-size: 11pt; }}
-        .side-block {{ margin-top: 0.5in; }}
-        #contact ul {{ margin-top: 0.05in; padding-left: 0; font-family: "Source Code Pro"; font-weight: 400; line-height: 1.75; }}
-        #skills {{ line-height: 1.5; }}
-        #skills ul {{ margin: 0.05in 0 0.15in; padding: 0; }}
-        #disclaimer {{ position: absolute; bottom: var(--sidebar-horizontal-padding); right: var(--sidebar-horizontal-padding); font-size: 7.5pt; font-style: italic; line-height: 1.1; text-align: right; color: #777; }}
-    </style>
-</head>
-<body lang="en">
-    <section id="main">
-        <header id="title"><h1>{name}</h1><span class="subtitle">{subtitle}</span></header>
-        <section class="main-block"><h2>Experience</h2>{experience}</section>
-        <section class="main-block"><h2>Projects</h2>{projects}</section>
-        <section class="main-block concise"><h2>Education & Certifications</h2>{education}</section>
-    </section>
-    <aside id="sidebar">
-        <div class="side-block" id="contact">
-            <h1>Contact Info</h1>
-            <ul>
-                <a href="{website}">{website_display}</a>
-                <li><i class="fa fa-envelope"></i> <a href="mailto:{email}">{email}</a></li>
-                <li><i class="fa fa-phone"></i> {phone}</li>
-            </ul>
-        </div>
-        <div class="side-block" id="skills"><h1>Skills</h1>{skills}</div>
-        <div class="side-block" id="disclaimer">Built with Resume Builder</div>
-    </aside>
-</body>
-</html>'''
-    
-    return html_template.format(
-        name=esc(data.get('name', 'Your Name')),
-        subtitle=esc(data.get('subtitle', '')),
-        experience=exp_html,
-        projects=proj_html,
-        education=edu_html,
-        skills=skills_html,
-        website=esc(website),
-        website_display=esc(website_display),
-        email=esc(data['contact'].get('email', '')),
-        phone=esc(data['contact'].get('phone', ''))
-    )
+    return generate_resume_html(data)
 
 def create_default_data():
     return {

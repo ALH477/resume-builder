@@ -1,0 +1,43 @@
+# Git files
+.git
+.gitignore
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+# Virtual environments
+venv
+env
+ENV
+.venv
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Documentation
+*.md
+docs/
+
+# Nix
+flake.nix
+flake.lock
+result
+
+# Test files
+.pytest_cache
+.coverage
+htmlcov
+test_*.py
