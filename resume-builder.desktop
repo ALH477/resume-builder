@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Resume Builder
+Comment=Create professional HTML resumes
+Exec=resume-builder
+Icon=text-editor
+Terminal=false
+Categories=Office;WordProcessor;
+Keywords=resume;cv;html;builder;career;
+StartupNotify=true
