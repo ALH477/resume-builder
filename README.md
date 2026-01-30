@@ -1,29 +1,54 @@
-# GTK Resume Builder
+# Resume Builder
 
-A GTK3-based desktop application for building professional HTML resumes with clean, modern styling.
+A GTK3 and web-based application for creating professional HTML resumes with clean, modern styling.
+
+## Overview
+
+Resume Builder provides two interfaces for generating polished, professional resumes:
+
+- **Desktop Interface (GTK3)**: Full-featured desktop application with visual form editing
+- **Web Interface (Flask)**: Browser-based application suitable for containers and remote access
+
+Both interfaces produce identical, professionally styled HTML output optimized for printing and PDF conversion.
 
 ## Features
 
-- **Visual Form Interface**: Easy-to-use GTK interface for entering resume data
-- **Multiple Sections**: Support for Experience, Projects, Education, and Skills
-- **Save/Load**: Save your resume data as JSON and load it later for editing
-- **HTML Export**: Generate a complete, styled HTML resume ready for printing or web use
-- **Preview**: View a text preview of your HTML output before exporting
+### Desktop Interface
+- Visual form interface for entering resume data
+- Multiple sections: Experience, Projects, Education, and Skills
+- Save and load resume data as JSON for future editing
+- Live preview of HTML output
+- Keyboard shortcuts: Ctrl+S (save), Ctrl+O (load), Ctrl+E (export), Ctrl+P (preview)
+
+### Web Interface
+- Responsive web UI accessible from any browser
+- REST API for programmatic access
+- Real-time preview updates
+- JSON import/export functionality
+- Docker-ready deployment
+
+### Generated HTML Output
+- Professional letter-sized layout (8.5" x 11")
+- Print-optimized styling
+- Timeline visualization with decorative elements
+- Clean typography using Open Sans font
+- Sidebar layout with contact information and skills
+- PDF-ready via browser print function
 
 ## Installation
 
-### Using Nix Flakes (Recommended)
+### Nix Flakes (Recommended)
 
-If you have Nix with flakes enabled:
+For systems with Nix and flakes enabled:
 
 ```bash
-# Run directly without installing
-nix run github:yourusername/resume-builder
+# Run directly without installation
+nix run github:ALH477/resume-builder
 
-# Or install to your profile
-nix profile install github:yourusername/resume-builder
+# Install to user profile
+nix profile install github:ALH477/resume-builder
 
-# Then run
+# Launch application
 resume-builder
 ```
 
@@ -31,13 +56,13 @@ resume-builder
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/resume-builder.git
+git clone https://github.com/ALH477/resume-builder.git
 cd resume-builder
 
 # Enter development shell
 nix develop
 
-# Run the application
+# Run the desktop application
 python3 resume_builder.py
 
 # Or build and run
@@ -48,97 +73,133 @@ nix build
 ### Traditional Installation
 
 #### Requirements
-
-- Python 3
-- GTK 3
+- Python 3.8+
+- GTK 3.0
 - PyGObject (gi)
 
-#### Ubuntu/Debian:
+#### Ubuntu/Debian
 ```bash
 sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 ```
 
-#### Fedora:
+#### Fedora
 ```bash
 sudo dnf install python3-gobject gtk3
 ```
 
-#### Arch Linux:
+#### Arch Linux
 ```bash
 sudo pacman -S python-gobject gtk3
 ```
 
+### Web Interface Installation
+
+```bash
+# Install dependencies
+pip install flask
+
+# Run web server
+python3 resume_builder.py --web --port 5000
+
+# Access at http://localhost:5000
+```
+
 ## Usage
 
-1. Run the application:
+### Desktop Application
+
+1. Launch the application:
    ```bash
    python3 resume_builder.py
    ```
-   or
-   ```bash
-   ./resume_builder.py
-   ```
 
-2. Fill in your information:
-   - **Header**: Enter your name and professional subtitle
-   - **Contact**: Add your website, email, and phone number
-   - **Experience**: Click "Add Experience" to add job entries with bullet points
-   - **Projects**: Click "Add Project" to add project entries
-   - **Education**: Click "Add Education" to add educational background
-   - **Skills**: Click "Add Skill Category" to organize your skills
+2. Enter your information using the form sections:
+   - **Header**: Full name and professional subtitle
+   - **Contact**: Website, email, and phone number
+   - **Experience**: Add work history with bullet points
+   - **Projects**: Add notable projects with descriptions
+   - **Education**: Add educational background
+   - **Skills**: Organize skills by category
 
 3. Export your resume:
-   - Click "Update Preview" to see a text preview
-   - Click "Export HTML" to save your resume as an HTML file
-   - Click "Save JSON" to save your data for future editing
-   - Click "Load JSON" to load previously saved resume data
+   - Use **Update Preview** to view HTML output
+   - Use **Export HTML** to save the resume file
+   - Use **Save JSON** to preserve data for later editing
+   - Use **Load JSON** to restore previously saved data
 
-## Generated HTML Features
+### Web Interface
 
-The exported HTML includes:
-- Professional letter-sized layout (8.5" × 11")
-- Print-optimized styling
-- Timeline visualization with decorative elements
-- Clean, modern typography using Open Sans font
-- Sidebar layout with contact info and skills
-- Responsive bullet points and formatting
-- Ready for PDF conversion via browser print
+1. Start the web server:
+   ```bash
+   python3 resume_builder.py --web --port 5000
+   ```
+
+2. Open http://localhost:5000 in your web browser
+
+3. Use the form to enter resume data and click Preview or Export
+
+### Docker Deployment
+
+#### Web Container (Recommended)
+```bash
+docker run -p 5000:5000 alh477/resume-builder:web
+```
+
+#### Desktop Container (Requires X11 Forwarding)
+```bash
+docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix alh477/resume-builder:latest
+```
 
 ## Tips
 
-- **Dates**: Use formats like "2024", "Present", "Jan 2024" for consistency
-- **Bullet Points**: Enter one achievement per line in the text area
+- **Date Formats**: Use consistent formats such as "2024", "Present", or "Jan 2024"
+- **Bullet Points**: Enter one achievement per line in text areas
 - **Skills**: Separate individual skills with commas (e.g., "Python, JavaScript, C++")
-- **Save Often**: Use "Save JSON" to preserve your work and make iterative edits
+- **Data Preservation**: Use the Save JSON feature regularly to preserve work
 
 ## File Structure
 
-- `resume_builder.py` - Main application file
-- `resume_data.json` - Saved resume data (created when you save)
-- `resume.html` - Exported HTML resume (created when you export)
+| File | Description |
+|------|-------------|
+| `resume_builder.py` | Main application with GTK and web interfaces |
+| `web_app.py` | Flask web application module |
+| `setup.py` | Python package configuration |
+| `flake.nix` | Nix flake for reproducible builds |
+| `Dockerfile` | Container definition for web interface |
+
+## API Reference (Web Interface)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Web UI |
+| `/api/preview` | POST | Generate HTML preview |
+| `/api/export` | POST | Download HTML file |
+| `/api/save` | POST | Download JSON data |
+| `/api/load` | POST | Upload and load JSON data |
 
 ## Customization
 
-The HTML template is embedded in the application. To customize the styling, you can:
+The HTML template is embedded in the application. To customize the output:
+
 1. Export an HTML file
-2. Edit the `<style>` section directly in the HTML
-3. Use the modified HTML as needed
+2. Modify the `<style>` section directly
+3. Use the customized output as needed
 
 The CSS uses CSS variables for easy customization of:
 - Page dimensions
 - Color scheme
 - Spacing and padding
-- Font sizes
+- Font sizes and typography
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. Please submit pull requests through GitHub.
 
-## Credits
+## Repository
 
-Created as a tool for building professional resumes with modern web standards.
-
+- GitHub: https://github.com/ALH477/resume-builder
+- Docker Hub: https://hub.docker.com/r/alh477/resume-builder
