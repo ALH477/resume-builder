@@ -23,13 +23,9 @@
             gobject-introspection
           ];
           
-          buildInputs = with pkgs; [
-            wrapGAppsHook
-          ];
-          
           nativeBuildInputs = with pkgs; [
             gobject-introspection
-            wrapGAppsHook
+            wrapGAppsHook3
           ];
           
           format = "other";
@@ -42,30 +38,73 @@
             mkdir -p $out/share/applications
             mkdir -p $out/share/doc/resume-builder
             
-            # Install the main script
             cp resume_builder.py $out/share/resume-builder/
             chmod +x $out/share/resume-builder/resume_builder.py
             
-            # Create wrapper script
             cat > $out/bin/resume-builder <<EOF
             #!${pkgs.bash}/bin/bash
             exec ${pkgs.python3}/bin/python3 $out/share/resume-builder/resume_builder.py "\$@"
             EOF
             chmod +x $out/bin/resume-builder
             
-            # Install desktop entry
             cp resume-builder.desktop $out/share/applications/
-            
-            # Install documentation
             cp README.md LICENSE CHANGELOG.md CONTRIBUTING.md $out/share/doc/resume-builder/
           '';
           
           meta = with pkgs.lib; {
             description = "A GTK3-based resume builder that generates professional HTML resumes";
-            homepage = "https://github.com/yourusername/resume-builder";
+            homepage = "https://github.com/ALH477/resume-builder";
             license = licenses.asl20;
-            maintainers = [ ];
+            maintainers = [ "ALH477@users.noreply.github.com" ];
             platforms = platforms.linux;
+          };
+        };
+        
+        dockerImage = pkgs.dockerTools.buildImage {
+          name = "resume-builder";
+          tag = "latest";
+          
+          copyToRoot = pkgs.buildEnv {
+            name = "image-root";
+            paths = [
+              pkgs.bash
+              pkgs.python3
+              pkgs.python3Packages.pygobject3
+              pkgs.gtk3
+              pkgs.gobject-introspection
+              pkgs.glib
+              pkgs.cairo
+              pkgs.pango
+              pkgs.gdk-pixbuf
+              pkgs.xorg.libX11
+              pkgs.xorg.libXcomposite
+              pkgs.xorg.libXcursor
+              pkgs.xorg.libXdamage
+              pkgs.xorg.libXext
+              pkgs.xorg.libXfixes
+              pkgs.xorg.libXi
+              pkgs.xorg.libXrandr
+              pkgs.xorg.libXrender
+              pkgs.xorg.libXtst
+              pkgs.atk
+              pkgs.at-spi2-atk
+              resume-builder
+            ];
+            pathsToLink = [ "/bin" "/lib" "/share" ];
+          };
+          
+          config = {
+            Cmd = [ "/bin/resume-builder" ];
+            Env = [
+              "DISPLAY=:99"
+              "PYTHONPATH=/share/resume-builder"
+            ];
+            Labels = {
+              "org.opencontainers.image.source" = "https://github.com/ALH477/resume-builder";
+              "org.opencontainers.image.description" = "A GTK3-based desktop application for building professional HTML resumes";
+              "org.opencontainers.image.version" = "1.0.0";
+              "maintainer" = "ALH477";
+            };
           };
         };
         
@@ -74,6 +113,7 @@
         packages = {
           default = resume-builder;
           resume-builder = resume-builder;
+          docker = dockerImage;
         };
         
         apps = {
