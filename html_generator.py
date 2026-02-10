@@ -19,8 +19,29 @@ from typing import Dict, List, Any
 
 
 def escape_text(text: str | None) -> str:
-    """Escape HTML special characters in text."""
-    return html.escape(str(text)) if text else ''
+    """Escape HTML special characters in text, preserving <br> tags and < symbols in contexts like <1ms."""
+    if not text:
+        return ''
+    
+    text = str(text)
+    
+    # Preserve <br> tags by temporarily replacing them
+    text = text.replace('<br>', '___BR___').replace('<br/>', '___BR___').replace('<br />', '___BR___')
+    
+    # Preserve < symbols in contexts like <1ms, <2024, etc. by temporarily replacing them
+    import re
+    text = re.sub(r'<(\d+)', r'___LT___\1', text)
+    
+    # Escape HTML entities
+    escaped = html.escape(text)
+    
+    # Restore <br> tags
+    escaped = escaped.replace('___BR___', '<br>')
+    
+    # Restore < symbols in numeric contexts
+    escaped = re.sub(r'___LT___(\d+)', r'<\1', escaped)
+    
+    return escaped
 
 
 def generate_experience_html(experiences: List[Dict[str, Any]]) -> str:
