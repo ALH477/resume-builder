@@ -81,16 +81,28 @@ def generate_skills_html(skills: List[Dict[str, Any]]) -> str:
     return skills_html
 
 
+def generate_achievements_html(achievements: List[str]) -> str:
+    """Generate HTML for achievements section."""
+    if not achievements:
+        return ""
+    
+    achievements_html = ""
+    for achievement in achievements:
+        achievements_html += f'<li>{escape_text(achievement)}</li>'
+    return achievements_html
+
+
 def generate_html(data: Dict[str, Any]) -> str:
     """
     Generate complete HTML resume from data dictionary.
     
     Args:
         data: Dictionary containing resume data with keys:
-            - name, subtitle
+            - name, subtitle, summary
             - contact: dict with website, email, phone
             - experience, projects, education: lists
             - skills: list of dicts
+            - achievements: list of strings
     
     Returns:
         Complete HTML document as string
@@ -123,6 +135,12 @@ def generate_html(data: Dict[str, Any]) -> str:
     proj_html = generate_projects_html(data.get('projects', []))
     edu_html = generate_education_html(data.get('education', []))
     skills_html = generate_skills_html(data.get('skills', []))
+    achievements_html = generate_achievements_html(data.get('achievements', []))
+    
+    # Process summary with <br> tags preserved
+    summary = data.get('summary', '')
+    if summary:
+        summary = f'<div class="summary">{escape_text(summary)}</div>'
     
     # Process website
     website = data.get('contact', {}).get('website', '')
@@ -132,10 +150,12 @@ def generate_html(data: Dict[str, Any]) -> str:
     return html_template.format(
         name=escape_text(data.get('name', 'Your Name')),
         subtitle=escape_text(data.get('subtitle', '')),
+        summary=summary,
         experience=exp_html,
         projects=proj_html,
         education=edu_html,
         skills=skills_html,
+        achievements=achievements_html,
         website=escape_text(website),
         website_display=escape_text(website_display),
         email=escape_text(data.get('contact', {}).get('email', '')),

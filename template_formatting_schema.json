@@ -1,0 +1,453 @@
+{
+  "schema_version": "1.0.0",
+  "page": {
+    "dimension": {
+      "width": "8.5in",
+      "height": "11in",
+      "unit": "inches"
+    },
+    "print": {
+      "@page": {
+        "size": "letter portrait",
+        "margin": "0"
+      }
+    }
+  },
+  "css_variables": {
+    "layout": {
+      "page_width": "8.5in",
+      "page_height": "11in",
+      "main_width": "6.4in",
+      "sidebar_width": "calc(var(--page-width) - var(--main-width))",
+      "decorator_horizontal_margin": "0.2in",
+      "sidebar_horizontal_padding": "0.2in",
+      "decorator_outer_offset_top": "10px",
+      "decorator_outer_offset_left": "-5.5px",
+      "decorator_border_width": "1px",
+      "decorator_outer_dim": "9px",
+      "decorator_border": "1px solid #ccc",
+      "row_blocks_padding_top": "5pt",
+      "date_block_width": "0.6in",
+      "main_blocks_title_icon_offset_left": "-19pt"
+    }
+  },
+  "layout": {
+    "body": {
+      "display": "flex",
+      "flex_direction": "row",
+      "width": "var(--page-width)",
+      "height": "var(--page-height)",
+      "margin": "0",
+      "font_family": "\"Courier New\", monospace",
+      "font_weight": "400",
+      "line_height": "1.3",
+      "color": "#444",
+      "hyphens": "auto"
+    },
+    "main_section": {
+      "id": "#main",
+      "flex": "1 1 var(--main-width)",
+      "padding": "0.25in 0.25in 0 0.25in",
+      "font_size": "7pt"
+    },
+    "sidebar_section": {
+      "id": "#sidebar",
+      "flex": "0 0 var(--sidebar-width)",
+      "height": "100%",
+      "padding": "0.6in var(--sidebar-horizontal-padding)",
+      "background_color": "#f2f2f2",
+      "font_size": "8.5pt",
+      "display": "flex",
+      "flex_direction": "column",
+      "justify_content": "space_between"
+    },
+    "header_title": {
+      "id": "#title",
+      "position": "relative",
+      "left": "0.55in",
+      "margin_bottom": "0.3in",
+      "line_height": "1.2"
+    },
+    "main_block": {
+      "class": ".main-block",
+      "margin_top": "0.1in",
+      "structure": ["h2", "blocks*"]
+    }
+  },
+  "typography": {
+    "base": {
+      "font_family": "\"Courier New\", monospace",
+      "font_weight": "400",
+      "line_height": "1.3",
+      "color": "#444"
+    },
+    "headings": {
+      "h1": {
+        "font_size": "18pt",
+        "font_weight": "400",
+        "line_height": "1.5",
+        "color": "#000",
+        "text_transform": "uppercase"
+      },
+      "h2": {
+        "font_size": "11pt",
+        "font_weight": "400",
+        "color": "#555",
+        "text_transform": "uppercase",
+        "position_relative": {
+          "top": "var(--row-blocks-padding-top)",
+          "left": "calc((var(--date-block-width) + var(--decorator-horizontal-margin)))"
+        },
+        "icon_offset": "var(--main-blocks-title-icon-offset-left)"
+      },
+      "h3": {
+        "font_size": "9pt",
+        "font_weight": "600",
+        "color": "#000"
+      }
+    },
+    "body": {
+      "base": "7pt",
+      "sidebar": "8.5pt",
+      "subtitle": "8pt",
+      "place": "7.5pt",
+      "location": "5pt",
+      "date": "7pt"
+    },
+    "line_heights": {
+      "base": "1.3",
+      "title": "1.2",
+      "subtitle_summary": "1.2",
+      "contact": "1.75",
+      "skills": "1.5",
+      "achievements": "1.5",
+      "disclaimer": "1.1"
+    },
+    "colors": {
+      "body": "#444",
+      "headings": "#000",
+      "secondary": "#555",
+      "muted": "#333",
+      "disclaimer": "#777",
+      "sidebar_background": "#f2f2f2"
+    }
+  },
+  "components": {
+    "blocks": {
+      "display": "flex",
+      "flex_flow": "row nowrap",
+      "items_padding_top": "var(--row-blocks-padding-top)",
+      "children": [".date", ".decorator", ".details"]
+    },
+    "date": {
+      "flex": "0 0 var(--date-block-width)",
+      "padding_top": "calc(var(--row-blocks-padding-top) + 2.5pt)",
+      "padding_right": "var(--decorator-horizontal-margin)",
+      "font_size": "7pt",
+      "text_align": "right",
+      "line_height": "1",
+      "date_separator": {
+        "element": ":nth-child(2)::before",
+        "content": "|",
+        "position": {
+          "top": "1pt",
+          "right": "5.5pt"
+        }
+      }
+    },
+    "decorator": {
+      "flex": "0 0 0",
+      "position": "relative",
+      "width": "2pt",
+      "min_height": "100%",
+      "border_left": "var(--decorator-border)",
+      "before": {
+        "position": "absolute",
+        "top": "var(--decorator-outer-offset-top)",
+        "left": "var(--decorator-outer-offset-left)",
+        "width": "var(--decorator-outer-dim)",
+        "height": "var(--decorator-outer-dim)",
+        "border_radius": "calc(var(--decorator-outer-dim) / 2)",
+        "background_color": "#fff"
+      },
+      "after": {
+        "position": "absolute",
+        "top": "calc(var(--decorator-outer-offset-top) + var(--decorator-border-width))",
+        "left": "calc(var(--decorator-outer-offset-left) + var(--decorator-border-width))",
+        "width": "calc(var(--decorator-outer-dim) - (var(--decorator-border-width) * 2))",
+        "height": "calc(var(--decorator-outer-dim) - (var(--decorator-border-width) * 2))",
+        "border_radius": "calc((var(--decorator-outer-dim) - (var(--decorator-border-width) * 2)) / 2)",
+        "background_color": "#555"
+      }
+    },
+    "details": {
+      "flex": "1 0 0",
+      "padding_left": "var(--decorator-horizontal-margin)",
+      "padding_top": "calc(var(--row-blocks-padding-top) - 0.5pt)",
+      "header": {
+        "color": "#000"
+      },
+      "title": {
+        "element": "h3",
+        "font_size": "9pt",
+        "font_weight": "600"
+      },
+      "place": {
+        "float": "left",
+        "font_size": "7.5pt"
+      },
+      "location": {
+        "float": "right",
+        "font_size": "5pt",
+        "pseudo": {
+          "element": "::before",
+          "font_family": "\"Font Awesome 6 Free\"",
+          "font_weight": "900",
+          "font_size": "5pt",
+          "content": "\"\\f3c5\"",
+          "position": {
+            "right": "3pt",
+            "top": "0.25pt"
+          }
+        }
+      }
+    },
+    "list": {
+      "ul": {
+        "padding_left": "0.07in",
+        "margin": "0.08in 0"
+      },
+      "li": {
+        "margin": "0 0 0.025in 0",
+        "pseudo": {
+          "element": "::before",
+          "position": "relative",
+          "margin_left": "-4.25pt",
+          "content": "'\\u2022 '"
+        }
+      },
+      "concise": {
+        "ul": {
+          "margin": "0",
+          "columns": "2"
+        },
+        "li": {
+          "margin": "0",
+          "margin_left": "0"
+        }
+      }
+    }
+  },
+  "sidebar": {
+    "section": {
+      "class": ".side-block",
+      "margin_top": "0.5in"
+    },
+    "contact": {
+      "id": "#contact",
+      "h1": {
+        "font_weight": "400",
+        "font_size": "11pt"
+      },
+      "ul": {
+        "margin_top": "0.05in",
+        "padding_left": "0",
+        "font_family": "\"Courier New\", monospace",
+        "font_weight": "400",
+        "line_height": "1.75"
+      },
+      "li_icon": {
+        "width": "9pt",
+        "text_align": "right"
+      }
+    },
+    "skills": {
+      "id": "#skills",
+      "line_height": "1.5",
+      "ul": {
+        "margin": "0.05in 0 0.15in",
+        "padding": "0"
+      }
+    },
+    "achievements": {
+      "id": "#achievements",
+      "line_height": "1.5",
+      "margin_top": "0.5in",
+      "ul": {
+        "margin": "0.05in 0 0.15in",
+        "padding": "0"
+      }
+    },
+    "disclaimer": {
+      "id": "#disclaimer",
+      "font_size": "7.5pt",
+      "font_style": "italic",
+      "line_height": "1.1",
+      "text_align": "right",
+      "color": "#777",
+      "margin_top": "0.5in"
+    }
+  },
+  "icons": {
+    "font_awesome": {
+      "class": ".fa",
+      "font_family": "\"Font Awesome 6 Free\"",
+      "font_weight": "900"
+    },
+    "used": [
+      {
+        "class": "fa-suitcase",
+        "unicode": "\\f0b1",
+        "usage": "Experience section h2 icon",
+        "position": {
+          "top": "1pt"
+        }
+      },
+      {
+        "class": "fa-folder-open",
+        "unicode": "\\f07c",
+        "usage": "Projects section h2 icon",
+        "position": {
+          "top": "1.5pt"
+        }
+      },
+      {
+        "class": "fa-graduation-cap",
+        "unicode": "\\f19d",
+        "usage": "Education section h2 icon",
+        "position": {
+          "left": "var(--main-blocks-title-icon-offset-left) - 2pt",
+          "top": "2pt"
+        }
+      },
+      {
+        "class": "fa-envelope",
+        "unicode": "\\f0e0",
+        "usage": "Contact email icon"
+      },
+      {
+        "class": "fa-phone",
+        "unicode": "\\f095",
+        "usage": "Contact phone icon"
+      },
+      {
+        "class": "fa-globe",
+        "unicode": "\\f0ac",
+        "usage": "Contact website icon"
+      },
+      {
+        "class": "fa-location-dot",
+        "unicode": "\\f3c5",
+        "usage": "Location marker in details"
+      }
+    ]
+  },
+  "print": {
+    "media_query": "@media print",
+    "overrides": {
+      "body": {
+        "margin": "0",
+        "padding": "0"
+      },
+      "sidebar": {
+        "background_color": "white !important"
+      },
+      "a": {
+        "color": "black !important",
+        "text_decoration": "none !important"
+      },
+      "decorator": {
+        "border_color": "black !important",
+        "background_color": "white !important"
+      },
+      "disclaimer": {
+        "display": "none"
+      },
+      "main_block": {
+        "page_break_inside": "avoid"
+      }
+    }
+  },
+  "html_structure": {
+    "root": {
+      "element": "body",
+      "lang": "en",
+      "children": [
+        {
+          "element": "section",
+          "id": "main",
+          "children": [
+            {
+              "element": "header",
+              "id": "title",
+              "children": [
+                {"element": "h1", "text": "Name"},
+                {"element": "span", "class": "subtitle", "text": "Subtitle"},
+                {"element": "div", "class": "summary", "text": "Summary with <br> tags"}
+              ]
+            },
+            {
+              "element": "section",
+              "class": "main-block",
+              "children": [
+                {"element": "h2", "children": ["i.fa-suitcase", "Experience"]},
+                {"element": "section", "class": "blocks", "repeating": true}
+              ]
+            }
+          ]
+        },
+        {
+          "element": "aside",
+          "id": "sidebar",
+          "children": [
+            {
+              "element": "div",
+              "class": "side-block",
+              "id": "contact",
+              "children": [
+                {"element": "h1", "text": "Contact Info"},
+                {"element": "ul", "children": [
+                  {"element": "li", "children": ["i.fa-globe", "a.website"]},
+                  {"element": "li", "children": ["i.fa-envelope", "a.email"]},
+                  {"element": "li", "children": ["i.fa-phone", "phone"]}
+                ]}
+              ]
+            },
+            {
+              "element": "div",
+              "class": "side-block",
+              "id": "skills",
+              "children": [
+                {"element": "h1", "text": "Skills"},
+                {"element": "ul", "children": [
+                  {"element": "li", "children": ["strong", "category", "skills"]}
+                ]}
+              ]
+            },
+            {
+              "element": "div",
+              "class": "side-block",
+              "id": "achievements",
+              "children": [
+                {"element": "h1", "text": "Achievements"},
+                {"element": "ul", "children": [
+                  {"element": "li", "text": "achievement"}
+                ]}
+              ]
+            },
+            {
+              "element": "div",
+              "class": "side-block",
+              "children": [
+                {"element": "ul", "children": [
+                  {"element": "li", "text": "footer text"}
+                ]}
+              ]
+            },
+            {"element": "div", "id": "disclaimer"}
+          ]
+        }
+      ]
+    }
+  }
+}
