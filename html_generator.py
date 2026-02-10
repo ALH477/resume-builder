@@ -95,12 +95,26 @@ def generate_html(data: Dict[str, Any]) -> str:
     Returns:
         Complete HTML document as string
     """
-    # Load template
-    template_path = Path(__file__).parent / 'templates' / 'resume_template.html'
-    try:
-        with open(template_path, 'r', encoding='utf-8') as f:
-            html_template = f.read()
-    except FileNotFoundError:
+    # Load template with multiple fallback paths
+    possible_paths = [
+        Path(__file__).parent / 'templates' / 'resume_template.html',
+        Path(__file__).parent / 'resume_template.html',
+        Path('.') / 'templates' / 'resume_template.html',
+        Path('.') / 'resume_template.html',
+        Path(__file__).parent / '..' / 'templates' / 'resume_template.html',
+    ]
+    
+    html_template = None
+    for template_path in possible_paths:
+        try:
+            if template_path.exists():
+                with open(template_path, 'r', encoding='utf-8') as f:
+                    html_template = f.read()
+                    break
+        except (FileNotFoundError, PermissionError):
+            continue
+    
+    if html_template is None:
         # Fallback: return basic HTML if template not found
         return '<html><body><p>Resume template not found</p></body></html>'
     
