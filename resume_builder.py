@@ -87,8 +87,6 @@ class ResumeBuilder(Gtk.Window):
         self.set_default_size(900, 700)
         self.set_border_width(10)
         self.set_property("name", "Resume Builder")
-        self.set_property("accessible-name", "Resume Builder Application")
-        
         logger.info("Initializing Resume Builder application")
         
         self.resume_data = {
@@ -189,7 +187,6 @@ class ResumeBuilder(Gtk.Window):
         label.set_size_request(100, -1)
         entry = Gtk.Entry()
         entry.set_placeholder_text(placeholder)
-        entry.set_property("accessible-name", label_text.strip(":"))
         box.pack_start(label, False, False, 0)
         box.pack_start(entry, True, True, 0)
         self.form_box.pack_start(box, False, False, 0)

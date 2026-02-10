@@ -6,54 +6,62 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        
-        pythonEnv = pkgs.python3;
-        
-        resume-builder = pkgs.python3Packages.buildPythonApplication {
-          pname = "resume-builder";
-          version = "1.1.0";
-          
-          src = ./.;
-          
-          propagatedBuildInputs = with pkgs; [
-            python3Packages.pygobject3
-            gtk3
-            gobject-introspection
-          ];
-          
-          nativeBuildInputs = with pkgs; [
-            gobject-introspection
-            wrapGAppsHook3
-          ];
-          
-          format = "other";
-          
-          dontBuild = true;
-          
-          installPhase = ''
-            mkdir -p $out/bin
-            mkdir -p $out/share/resume-builder
-            mkdir -p $out/share/applications
-            mkdir -p $out/share/doc/resume-builder
-            
-            cp resume_builder.py $out/share/resume-builder/
-            if [ -f web_app.py ]; then cp web_app.py $out/share/resume-builder/; fi
-            chmod +x $out/share/resume-builder/resume_builder.py
-            if [ -f $out/share/resume-builder/web_app.py ]; then chmod +x $out/share/resume-builder/web_app.py; fi
-            
-            cat > $out/bin/resume-builder <<EOF
-            #!${pkgs.bash}/bin/bash
-            exec ${pythonEnv}/bin/python3 $out/share/resume-builder/resume_builder.py "\$@"
-            EOF
-            chmod +x $out/bin/resume-builder
-            
-            cp resume-builder.desktop $out/share/applications/
-            cp README.md LICENSE CHANGELOG.md CONTRIBUTING.md $out/share/doc/resume-builder/
-          '';
+   outputs = { self, nixpkgs, flake-utils }:
+     flake-utils.lib.eachDefaultSystem (system:
+       let
+         pkgs = nixpkgs.legacyPackages.${system};
+         
+         pythonWithPackages = pkgs.python3.withPackages (ps: with ps; [
+           pygobject3
+           flask
+         ]);
+         
+          resume-builder = pkgs.python3Packages.buildPythonApplication {
+           pname = "resume-builder";
+           version = "1.1.0";
+           
+           src = ./.;
+           
+           propagatedBuildInputs = with pkgs; [
+             python3Packages.pygobject3
+             gtk3
+             gobject-introspection
+           ];
+           
+           nativeBuildInputs = with pkgs; [
+             gobject-introspection
+             wrapGAppsHook3
+           ];
+           
+           format = "other";
+           
+           dontBuild = true;
+           
+           installPhase = ''
+             mkdir -p $out/share/resume-builder
+             mkdir -p $out/share/applications
+             mkdir -p $out/share/doc/resume-builder
+             
+             cp resume_builder.py $out/share/resume-builder/
+             cp html_generator.py $out/share/resume-builder/
+             if [ -f web_app.py ]; then cp web_app.py $out/share/resume-builder/; fi
+             chmod +x $out/share/resume-builder/resume_builder.py
+             chmod +x $out/share/resume-builder/html_generator.py
+             if [ -f $out/share/resume-builder/web_app.py ]; then chmod +x $out/share/resume-builder/web_app.py; fi
+             
+             cp resume-builder.desktop $out/share/applications/
+             cp README.md LICENSE CHANGELOG.md CONTRIBUTING.md $out/share/doc/resume-builder/
+           '';
+           
+           # Custom postFixup to wrap the Python script with proper environment
+           preFixup = ''
+             makeWrapper ${pythonWithPackages}/bin/python $out/bin/resume-builder \
+               --add-flags $out/share/resume-builder/resume_builder.py \
+               --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH" \
+               --prefix GDK_PIXBUF_MODULE_FILE : "$GDK_PIXBUF_MODULE_FILE" \
+               --prefix XDG_DATA_DIRS : "$out/share" \
+               --prefix PYTHONPATH : "$out/share/resume-builder"
+           '';
           
           meta = with pkgs.lib; {
             description = "A GTK3 and web-based resume builder that generates professional HTML resumes";
@@ -70,11 +78,10 @@
           
           copyToRoot = pkgs.buildEnv {
             name = "image-root";
-            paths = [
-              pkgs.bash
-              pythonEnv
-              pkgs.python3Packages.pygobject3
-              pkgs.gtk3
+             paths = [
+               pkgs.bash
+               pythonWithPackages
+               pkgs.gtk3
               pkgs.gobject-introspection
               pkgs.glib
               pkgs.cairo
@@ -118,10 +125,9 @@
           
           copyToRoot = pkgs.buildEnv {
             name = "web-image-root";
-            paths = [
-              pkgs.bash
-              pythonEnv
-              pkgs.python3Packages.flask
+             paths = [
+               pkgs.bash
+               pythonWithPackages
               resume-builder
             ];
             pathsToLink = [ "/bin" "/lib" "/share" ];
@@ -162,10 +168,8 @@
         };
         
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            pythonEnv
-            python3Packages.pygobject3
-            python3Packages.flask
+           buildInputs = with pkgs; [
+             pythonWithPackages
             gtk3
             gobject-introspection
           ];
