@@ -1,0 +1,98 @@
+{
+  "name": "Asher LeRoy",
+  "subtitle": "Cybersecurity Innovator | Founder | Embedded Systems & Audio Engineer",
+  "summary": "Self-taught cybersecurity innovator and embedded systems engineer with a decade of experience, founding DeMoD LLC by age 21 to deliver mission-critical solutions in real-time audio, cybersecurity, and hardware. Architected a Rust-based real-time kernel and patented protocols for defense-grade applications, alongside eco-smart guitar platforms with sub-1ms DSP latency, ideal for startups, ITAR contractors, and high-ambition ventures.",
+  "contact": {
+    "website": "https://demod.ltd",
+    "email": "contact@demod.ltd",
+    "phone": ""
+  },
+  "experience": [
+    {
+      "title": "Founder & Lead Developer",
+      "company": "DeMoD LLC",
+      "location": "Remote",
+      "start_date": "2022",
+      "end_date": "Present",
+      "bullets": [
+        "Bootstrapped DeMoD LLC, prototyping scalable cybersecurity, real-time audio, and hardware solutions for defense and high-tech applications.",
+        "Developed demod.ltd on a VPS with Docker in 12 days, using Cloudflare, achieving PageSpeed Insights scores (Mar 31, 2025): Performance 94, Accessibility 89, Best Practices 100, SEO 82.",
+        "Designed the ITAR-regulated DeMoD Secure Protocol (DSP) with AES-256-GCM encryption, securing provisional patent (63/825,459) and submitting for USAF SBIR grant (AF254-D0814, Jun 2025); released sanitized DCF under GPLv3 for community adoption.",
+        "Created ArchibaldOS, a NixOS Linux distro with CachyOS' real-time BORE kernel, reducing audio latency by 30% (<1ms) using MusinX, NixOS, and TI DSP for real-time audio FX, rivaling Apple's Core Audio."
+      ]
+    },
+    {
+      "title": "Low Voltage Technician",
+      "company": "Yate Industries",
+      "location": "Bend, Oregon",
+      "start_date": "2024",
+      "end_date": "2024",
+      "bullets": [
+        "Performed routine installation and maintenance of network cabling and security systems, ensuring operational reliability.",
+        "Gained hands-on experience with CAT5 cabling and hardware integration, applying skills to self-directed DeMoD LLC projects."
+      ]
+    },
+    {
+      "title": "Kitchen Support Specialist",
+      "company": "Yozora Sake & Wine Listening Bar",
+      "location": "San Antonio, Texas",
+      "start_date": "2023",
+      "end_date": "2024",
+      "bullets": [
+        "Supported kitchen operations, including prep and inventory management, in a fast-paced environment.",
+        "Developed discipline and time management skills, contributing to efficiency in self-directed technical projects."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "PetaByte Madness",
+      "subtitle": "Solo Developer",
+      "start_date": "2024",
+      "end_date": "Present",
+      "bullets": [
+        "Developing a C++ simulation game using idTech 4 engine fork, with 33% of profits supporting AMBER Alert via CAF. Integrates DCF netcode and EchoForge-DSP for sub-1ms audio."
+      ]
+    },
+    {
+      "title": "EchoForge-DSP & Guitar Platform",
+      "subtitle": "Solo Developer",
+      "start_date": "2016",
+      "end_date": "Present",
+      "bullets": [
+        "Designed EchoForge-DSP, the most poweerful FOSH custom PCB with TI DSP, ADC, DAC, and USB-C for sub-1ms audio FX, integrated with Rust-based real-time kernel for guitars, drones, and space tech. Supports 32-bit/192kHz recording; uses Python for schematic/PCB generation. On GitHub under a strongly reciporical license.",
+        "Designed Big Bertha, a 5-string bass with hempcrete/metal body, vacuum tubes, and Jetson Nano for onboard DSP, achieving 24-bit/96kHz FX with Sierpinski fractal antenna for optimized BT/Wi-Fi."
+      ]
+    },
+    {
+      "title": "Other Projects",
+      "subtitle": "Solo Developer",
+      "start_date": "",
+      "end_date": "",
+      "bullets": [
+        "Developed DeMoD-RISC-Audio-Kernel, a bare-metal Rust kernel for RISC-V, with drivers for USB, I2S, BT, and Wi-Fi, integrated with StreamDB for low-latency audio storage.",
+        "Built a 6ft emulation arcade machine (2020–2021) and a Geezer Butler-inspired Fender PJ Bass, demonstrating hardware craftsmanship."
+      ]
+    }
+  ],
+  "education": [],
+  "skills": [
+    {
+      "category": "Cybersecurity & Defense",
+      "skills": "AES-256-GCM, ITAR Compliance, Threat Mitigation, Network Security, Pen Testing"
+    },
+    {
+      "category": "Development & AI",
+      "skills": "Rust, C++, Python, Docker, Nix, Full-Stack (HTML/CSS/JS, Node.js), Linux Kernel Optimization, AI-Enhanced Prototyping"
+    },
+    {
+      "category": "Hardware & Real-Time Systems",
+      "skills": "PCB Design, RISC-V, Drone Engineering, Audio DSP, Low-Latency Kernel Tuning, Sierpinski Antenna Design"
+    }
+  ],
+  "achievements": [
+    "Secured provisional patent for DSP (63/825,459) and submitted USAF SBIR grant.",
+    "Optimized ArchibaldOS to achieve <1ms audio latency with Rust kernel and TI DSP PCB.",
+    "Designed eco-smart guitar platform with hempcrete body and Sierpinski antenna for 90% efficient BT/Wi-Fi."
+  ]
+}

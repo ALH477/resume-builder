@@ -526,7 +526,12 @@ class ResumeBuilder(Gtk.Window):
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK
         )
-        dialog.set_filter(Gtk.FileFilter().add_pattern("*.json"))
+        
+        # Create file filter for JSON files
+        json_filter = Gtk.FileFilter()
+        json_filter.set_name("JSON files")
+        json_filter.add_pattern("*.json")
+        dialog.add_filter(json_filter)
         
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
