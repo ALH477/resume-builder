@@ -7,7 +7,10 @@ A GTK3 and web-based application for creating professional HTML resumes with cle
 Resume Builder provides two interfaces for generating polished, professional resumes:
 
 - **Desktop Interface (GTK3)**: Full-featured desktop application with visual form editing
+<img width="1810" height="1180" alt="image" src="https://github.com/user-attachments/assets/7486b534-ec4f-4d44-8494-b791335bb2f0" />
+
 - **Web Interface (Flask)**: Browser-based application suitable for containers and remote access
+<img width="1200" height="1255" alt="image" src="https://github.com/user-attachments/assets/aff7c25c-f242-45b0-b6df-9f8e6526544a" />
 
 Both interfaces produce identical, professionally styled HTML output optimized for printing and PDF conversion.
 
